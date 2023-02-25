@@ -2,9 +2,7 @@ import { MoneyType } from "../domain/money";
 import { MoneyStock } from "../domain/moneyStock";
 import { MoneyStockStorage } from "../application/useCase";
 
-export const MemoryMoneyStockStorage = new (class MemoryMoneyStockStorage
-  implements MoneyStockStorage
-{
+export class MemoryMoneyStockStorage implements MoneyStockStorage {
   private map;
 
   constructor() {
@@ -18,4 +16,4 @@ export const MemoryMoneyStockStorage = new (class MemoryMoneyStockStorage
   setStock(type: MoneyType, stock: MoneyStock) {
     this.map.set(type, stock);
   }
-})();
+}
