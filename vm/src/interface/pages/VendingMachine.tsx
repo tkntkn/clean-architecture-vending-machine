@@ -31,7 +31,7 @@ export function VendingMachine(props: {}) {
       <form onSubmit={handleInsert}>
         <input data-testid="money" type="text" value={money} onChange={(event) => setMoney(event.target.value)} />
         <button data-testid="insert" type="submit">
-          Insert!
+          Insert
         </button>
       </form>
       <p>Inserted: {totalInsertedAmount}yen</p>
