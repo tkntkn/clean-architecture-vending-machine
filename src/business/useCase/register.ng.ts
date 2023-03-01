@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { getUserByEmail } from "../../adapter/getUserByEmail";
 import { requestRegister } from "../../adapter/requestRegister";
 import { validateNewUser } from "../domain/user";
-import { RegisteringState } from "./register";
+import { RegistrationState } from "./register";
 
 /**
  * Why No Good?
@@ -16,48 +16,48 @@ import { RegisteringState } from "./register";
 
 // NG Example in React
 export function useRegister() {
-  const [registeringState, setRegisteringState] = useState<RegisteringState>("none");
+  const [registrationState, setRegistrationState] = useState<RegistrationState>("none");
 
   const register = async (email: string, name: string) => {
-    setRegisteringState("validating");
+    setRegistrationState("validating");
     const user = { email, name };
     const valid = await validateNewUser(user, { getUserByEmail });
     if (!valid) {
-      setRegisteringState("invalid");
+      setRegistrationState("invalid");
     } else {
-      setRegisteringState("registering");
+      setRegistrationState("registering");
       const success = await requestRegister(user);
       if (!success) {
-        setRegisteringState("failed");
+        setRegistrationState("failed");
       } else {
-        setRegisteringState("succeeded");
+        setRegistrationState("succeeded");
       }
     }
   };
 
-  return [registeringState, register] as const;
+  return [registrationState, register] as const;
 }
 
 // NG Example in Vue
 export function setupRegister() {
-  const registeringState = ref<RegisteringState>("none");
+  const registrationState = ref<RegistrationState>("none");
 
   const register = async (email: string, name: string) => {
-    registeringState.value = "validating";
+    registrationState.value = "validating";
     const user = { email, name };
     const valid = await validateNewUser(user, { getUserByEmail });
     if (!valid) {
-      registeringState.value = "invalid";
+      registrationState.value = "invalid";
     } else {
-      registeringState.value = "registering";
+      registrationState.value = "registering";
       const success = await requestRegister(user);
       if (!success) {
-        registeringState.value = "failed";
+        registrationState.value = "failed";
       } else {
-        registeringState.value = "succeeded";
+        registrationState.value = "succeeded";
       }
     }
   };
 
-  return [registeringState, register] as const;
+  return [registrationState, register] as const;
 }

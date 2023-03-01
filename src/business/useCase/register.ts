@@ -1,8 +1,10 @@
 import { User, validateNewUser } from "../domain/user";
 import { State } from "../../common/state";
 
+export type RegistrationState = "none" | "validating" | "invalid" | "registering" | "failed" | "succeeded";
+
 export type RegisterState = {
-  registeringState: State<RegisteringState>;
+  registrationState: State<RegistrationState>;
 };
 
 export type RegisterAdapter = {
@@ -10,9 +12,23 @@ export type RegisterAdapter = {
   getUserByEmail: (email: string) => Promise<User | undefined>;
 };
 
-export type RegisteringState = "none" | "validating" | "invalid" | "registering" | "failed" | "succeeded";
+export async function register(user: User, { registrationState }: RegisterState, { requestRegister, getUserByEmail }: RegisterAdapter) {
+  registrationState.set("validating");
+  const valid = await validateNewUser(user, { getUserByEmail });
+  if (!valid) {
+    registrationState.set("invalid");
+  } else {
+    registrationState.set("registering");
+    const success = await requestRegister(user);
+    if (!success) {
+      registrationState.set("failed");
+    } else {
+      registrationState.set("succeeded");
+    }
+  }
+}
 
-export function getRegisteringStateFeedback(state: RegisteringState) {
+export function getRegistrationStateFeedback(state: RegistrationState) {
   switch (state) {
     case "validating":
       return "Validating...";
@@ -24,21 +40,5 @@ export function getRegisteringStateFeedback(state: RegisteringState) {
       return "Hmm, something wrong.";
     case "succeeded":
       return "Success!";
-  }
-}
-
-export async function register(user: User, { registeringState }: RegisterState, { requestRegister, getUserByEmail }: RegisterAdapter) {
-  registeringState.set("validating");
-  const valid = await validateNewUser(user, { getUserByEmail });
-  if (!valid) {
-    registeringState.set("invalid");
-  } else {
-    registeringState.set("registering");
-    const success = await requestRegister(user);
-    if (!success) {
-      registeringState.set("failed");
-    } else {
-      registeringState.set("succeeded");
-    }
   }
 }

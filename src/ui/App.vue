@@ -2,19 +2,19 @@
 import { computed, ref } from "vue";
 import { getUserByEmail } from "../adapter/getUserByEmail";
 import { requestRegister } from "../adapter/requestRegister";
-import { getRegisteringStateFeedback, register, RegisteringState } from "../business/useCase/register";
+import { getRegistrationStateFeedback, register, RegistrationState } from "../business/useCase/register";
 import { toBusinessState } from "../common/state";
 
-const registeringState = ref<RegisteringState>("none");
+const registrationState = ref<RegistrationState>("none");
 const email = ref<string>("");
 const name = ref<string>("");
 
 function handleRegisterClick() {
   const user = { email: email.value, name: name.value };
-  return register(user, { registeringState: toBusinessState(registeringState) }, { requestRegister, getUserByEmail });
+  return register(user, { registrationState: toBusinessState(registrationState) }, { requestRegister, getUserByEmail });
 }
 
-const feedback = computed(() => getRegisteringStateFeedback(registeringState.value));
+const feedback = computed(() => getRegistrationStateFeedback(registrationState.value));
 </script>
 <template>
   <main>

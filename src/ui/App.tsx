@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { getUserByEmail } from "../adapter/getUserByEmail";
 import { requestRegister } from "../adapter/requestRegister";
-import { getRegisteringStateFeedback, register, RegisteringState } from "../business/useCase/register";
+import { getRegistrationStateFeedback, register, RegistrationState } from "../business/useCase/register";
 import { useBusinessState } from "../common/state";
 
 export function App() {
-  const [registeringState, setRegisteringState] = useState<RegisteringState>("none");
-  const businessRegisteringState = useBusinessState([registeringState, setRegisteringState]);
+  const [registrationState, setRegistrationState] = useState<RegistrationState>("none");
+  const businessRegistrationState = useBusinessState([registrationState, setRegistrationState]);
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
 
   const handleRegisterClick = () => {
     const user = { email, name };
-    return register(user, { registeringState: businessRegisteringState }, { requestRegister, getUserByEmail });
+    return register(user, { registrationState: businessRegistrationState }, { requestRegister, getUserByEmail });
   };
 
-  const feedback = getRegisteringStateFeedback(registeringState);
+  const feedback = getRegistrationStateFeedback(registrationState);
 
   return (
     <main>
