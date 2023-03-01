@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import "@/interface/pages/Root.css";
 import { Money, MoneyType } from "@/domain/entities/money";
-import { getInsertionStatusMessage, insert, InsertionState } from "@/domain/flows/insert";
+import { getInsertionStatusMessage, insertMoney, InsertionState } from "@/domain/flows/insertMoney";
 import { useArrayRecord } from "@/utils/hooks";
 
 export function VendingMachine(props: {}) {
@@ -11,7 +11,7 @@ export function VendingMachine(props: {}) {
   const [money, setMoney] = useState("");
   const handleInsert = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    insert(money, {
+    insertMoney(money, {
       stock: { add: (type, money) => addToInsertedMoneyStock(type.value, money) },
       state: { set: setInsertionState },
     });

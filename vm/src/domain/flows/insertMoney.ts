@@ -1,6 +1,5 @@
 import { detectMoneyType, Money, MoneyType } from "@/domain/entities/money";
 import { assertNever } from "@/utils/switchCaseHelper";
-import { stat } from "fs";
 
 export type InsertionState = "inserted" | "invalid";
 
@@ -9,7 +8,7 @@ export type InsertState = {
   state: { set(message: InsertionState): void };
 };
 
-export function insert(moneyLike: string, { stock, state }: InsertState) {
+export function insertMoney(moneyLike: string, { stock, state }: InsertState) {
   const detected = detectMoneyType(moneyLike);
   if (detected) {
     const { type, money } = detected;
