@@ -1,5 +1,5 @@
 import { detectMoneyType, Money, MoneyType } from "@/domain/entities/money";
-import { assertNever } from "@/utils/switchCaseHelper";
+import { assertNever } from "@/utils/SwitchCaseHelper";
 
 export type InsertionState = "inserted" | "invalid";
 
