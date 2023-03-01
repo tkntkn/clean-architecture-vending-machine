@@ -15,7 +15,7 @@ import { RegisteringState } from "./register";
  */
 
 // NG Example in React
-export function useRegisterReact() {
+export function useRegister() {
   const [registeringState, setRegisteringState] = useState<RegisteringState>("none");
 
   const register = async (email: string, name: string) => {
