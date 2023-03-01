@@ -29,8 +29,10 @@ export function VendingMachine(props: {}) {
     <div className="VendingMachine">
       {insertionState && <p>{getInsertionStatusMessage(insertionState)}</p>}
       <form onSubmit={handleInsert}>
-        <input type="text" value={money} onChange={(event) => setMoney(event.target.value)} />
-        <button type="submit">Insert</button>
+        <input data-testid="money" type="text" value={money} onChange={(event) => setMoney(event.target.value)} />
+        <button data-testid="insert" type="submit">
+          Insert
+        </button>
       </form>
       <p>Inserted: {totalInsertedAmount}yen</p>
     </div>
