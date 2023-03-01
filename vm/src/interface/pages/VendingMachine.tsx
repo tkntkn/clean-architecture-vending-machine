@@ -1,5 +1,4 @@
 import { FormEvent, useMemo, useState } from "react";
-import "@/interface/pages/Root.css";
 import { Money, MoneyType } from "@/domain/entities/money";
 import { getInsertionStatusMessage, insertMoney, InsertionState } from "@/domain/flows/insertMoney";
 import { useArrayRecord } from "@/utils/hooks";
