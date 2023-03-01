@@ -11,11 +11,13 @@
     "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test-storybook": "test-storybook --watch",
-    "screenshot": "storycap --serverCmd \"cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 9001\" http://localhost:9001"
+    "screenshot": "storycap http://localhost:9001 --serverCmd \"cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook --no-open -p 9001\" -e Example/**",
+    "vrt": "dotenv reg-suit run"
   },
   "dependencies": {
     "@storybook/jest": "^0.0.10",
     "@storybook/test-runner": "^0.9.4",
+    "dotenv-cli": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.2",
@@ -36,6 +38,10 @@
     "@vitest/ui": "^0.29.2",
     "babel-loader": "^8.3.0",
     "cross-env": "^7.0.3",
+    "reg-keygen-git-hash-plugin": "^0.12.1",
+    "reg-notify-github-plugin": "^0.12.1",
+    "reg-publish-s3-plugin": "^0.12.1",
+    "reg-suit": "^0.12.1",
     "storycap": "^4.0.0",
     "typescript": "^4.9.3",
     "vite": "^4.1.0",
