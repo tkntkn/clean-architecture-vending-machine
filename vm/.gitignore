@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 stories
+__screenshots__

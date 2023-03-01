@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "test-storybook": "test-storybook --watch"
+    "test-storybook": "test-storybook --watch",
+    "screenshot": "storycap --serverCmd \"cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 9001\" http://localhost:9001"
   },
   "dependencies": {
     "@storybook/jest": "^0.0.10",
@@ -35,6 +36,7 @@
     "@vitest/ui": "^0.29.2",
     "babel-loader": "^8.3.0",
     "cross-env": "^7.0.3",
+    "storycap": "^4.0.0",
     "typescript": "^4.9.3",
     "vite": "^4.1.0",
     "vitest": "^0.29.2"
