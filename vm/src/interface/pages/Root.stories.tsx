@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import Root from "@/interface/pages/Root";
+import { Root } from "@/interface/pages/Root";
 
 export default {
   component: Root,

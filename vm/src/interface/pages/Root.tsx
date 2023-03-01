@@ -2,11 +2,11 @@ import { useState } from "react";
 import reactLogo from "@/interface/assets/react.svg";
 import "@/interface/pages/Root.css";
 
-function Root(props: {}) {
+export function Root(props: {}) {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="App">
+    <div className="Root">
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
@@ -26,5 +26,3 @@ function Root(props: {}) {
     </div>
   );
 }
-
-export default Root;

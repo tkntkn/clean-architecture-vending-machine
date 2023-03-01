@@ -1,4 +1,4 @@
-import Root from "@/interface/pages/Root";
+import { Root } from "@/interface/pages/Root";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "@/interface/index.css";
