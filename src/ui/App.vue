@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { getUserByEmail } from "../adapter/getUserByEmail";
 import { requestRegister } from "../adapter/requestRegister";
 import { getRegisteringStateFeedback, register, RegisteringState } from "../business/useCase/register";
-import { toBusinessState } from "../util/state";
+import { toBusinessState } from "../common/state";
 
 const registeringState = ref<RegisteringState>("none");
 const email = ref<string>("");
