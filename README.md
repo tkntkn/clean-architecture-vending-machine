@@ -1,4 +1,4 @@
-# Dependency Graph
+## Architecture
 ```mermaid
 flowchart LR
 
