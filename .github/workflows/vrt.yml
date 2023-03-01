@@ -24,4 +24,4 @@ jobs:
           git checkout ${GITHUB_REF#refs/heads/} || git checkout -b ${GITHUB_REF#refs/heads/} && git pull
       - run: npm run build-storybook
       - run: npm run static-screenshot
-      - run: npm run vrt
+      - run: npx reg-suit run
