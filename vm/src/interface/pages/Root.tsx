@@ -1,8 +1,8 @@
 import { useState } from "react";
 import reactLogo from "@/interface/assets/react.svg";
-import "@/interface/components/App.css";
+import "@/interface/pages/Root.css";
 
-function App() {
+function Root(props: {}) {
   const [count, setCount] = useState(0);
 
   return (
@@ -27,4 +27,4 @@ function App() {
   );
 }
 
-export default App;
+export default Root;

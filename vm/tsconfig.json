@@ -20,6 +20,11 @@
       "@/*": ["./src/*"],
     }
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
