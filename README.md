@@ -18,20 +18,25 @@ end
 subgraph 6["util"]
 7["PromiseHelper.ts"]
 end
-subgraph B["ui"]
-C["App.tsx"]
-D["App.vue"]
+subgraph B["common"]
+C["state.ts"]
+end
+subgraph D["ui"]
+E["App.tsx"]
+F["App.vue"]
 end
 end
 2-->5
 2-->7
 8-->5
 8-->7
+A-->C
 A-->5
-C-->2
-C-->8
-C-->A
-D-->2
-D-->8
-D-->A
+E-->2
+E-->8
+E-->A
+E-->C
+F-->2
+F-->8
+F-->A
 ```

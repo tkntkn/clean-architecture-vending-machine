@@ -207,7 +207,6 @@ module.exports = {
     exclude : {
       path: [
         'src/business/useCase/register\.ng\.ts',
-        'src/common/.*',
       ],
       dynamic: true
     },
