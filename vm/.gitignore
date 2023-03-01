@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+storybook-static
 stories
 __screenshots__
 .reg
