@@ -9,10 +9,12 @@
     "test": "vitest --ui",
     "preview": "vite preview",
     "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test-storybook": "test-storybook --watch"
   },
   "dependencies": {
     "@storybook/jest": "^0.0.10",
+    "@storybook/test-runner": "^0.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.2",

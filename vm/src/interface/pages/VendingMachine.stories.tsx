@@ -14,10 +14,18 @@ const Template: ComponentStory<typeof VendingMachine> = (args) => <VendingMachin
 
 export const Main = Template.bind({});
 
-Main.play = async ({ canvasElement }) => {
+export const Valid = Template.bind({});
+Valid.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  await userEvent.type(canvas.getByTestId("money"), "100円玉");
+  await userEvent.click(canvas.getByTestId("insert"));
+  await expect(canvas.getAllByText("Inserted.")).toHaveLength(1);
+};
+
+export const Invalid = Template.bind({});
+Invalid.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   await userEvent.type(canvas.getByTestId("money"), "100円");
   await userEvent.click(canvas.getByTestId("insert"));
-
-  expect(canvas.getAllByText("Invalid Money.")).toHaveLength(1);
+  await expect(canvas.getAllByText("Invalid Money.")).toHaveLength(1);
 };
