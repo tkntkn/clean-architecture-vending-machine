@@ -16,74 +16,77 @@ const Template: ComponentStory<typeof VendingMachine> = (args) => <VendingMachin
 
 export const Main = Template.bind({});
 
-export const Valid = Template.bind({});
-Valid.play = async ({ canvasElement }) => {
+async function earnToWallet(earned: string, canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
-
-  // 操作
-  await userEvent.type(canvas.getByTestId("earning"), "100円玉");
+  await userEvent.type(canvas.getByTestId("earning"), earned);
   await userEvent.click(canvas.getByText("Earn"));
+}
+
+async function earnAndInsert(earned: string, canvasElement: HTMLElement) {
+  const canvas = within(canvasElement);
+  await earnToWallet("100円玉", canvasElement);
   await dragAndDrop(canvas.getAllByText("100円玉")[0], canvas.getByText("Insert"));
+}
 
-  // 結果
-  await expect(canvas.getAllByText("Inserted.")).toHaveLength(1);
-};
-
-export const Invalid = Template.bind({});
-Invalid.play = async ({ canvasElement }) => {
+async function earnAndInsertTwiceAndReturn(earned: string, canvasElement: HTMLElement) {
   const canvas = within(canvasElement);
-
-  // 操作
-  await userEvent.type(canvas.getByTestId("earning"), "100円");
-  await userEvent.click(canvas.getByText("Earn"));
-  await dragAndDrop(canvas.getAllByText("100円")[0], canvas.getByText("Insert"));
-
-  // 結果
-  await expect(canvas.getAllByText("Invalid Money.")).toHaveLength(1);
-};
+  await earnAndInsert(earned, canvasElement);
+  await earnAndInsert(earned, canvasElement);
+  await userEvent.click(canvas.getByTestId("return"));
+}
 
 export const EarnToWallet = Template.bind({});
 EarnToWallet.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
-  // 前提条件
-  await expect(within(canvas.getByTestId("wallet")).queryAllByText(/^100円$/)).toHaveLength(0);
-
-  // 操作
-  await userEvent.type(canvas.getByTestId("earning"), "100円");
-  await userEvent.click(canvas.getByText("Earn"));
-
-  // 結果
-  await expect(within(canvas.getByTestId("wallet")).queryAllByText(/^100円$/)).toHaveLength(1);
+  await expect(within(canvas.getByTestId("wallet")).queryAllByText(/^100円玉$/)).toHaveLength(0);
+  await earnToWallet("100円玉", canvasElement);
+  await expect(within(canvas.getByTestId("wallet")).queryAllByText(/^100円玉$/)).toHaveLength(1);
 };
 
-export const DragAndDrop = Template.bind({});
-DragAndDrop.play = async ({ canvasElement }) => {
+export const Insert100 = Template.bind({});
+Insert100.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
-  // 操作
-  await (Valid as any).play({ canvasElement });
-
-  // 結果
+  await earnAndInsert("100円玉", canvasElement);
+  await expect(canvas.getAllByText("Inserted.")).toHaveLength(1);
   await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^100円$/);
+};
 
-  // 操作
-  await (Valid as any).play({ canvasElement });
+export const InsertInvalid = Template.bind({});
+InsertInvalid.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
 
-  // 結果
-  await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^200円$/);
+  await earnToWallet("100円", canvasElement);
+  await dragAndDrop(canvas.getAllByText("100円")[0], canvas.getByText("Insert"));
+  await expect(canvas.getAllByText("Invalid Money.")).toHaveLength(1);
+};
 
-  // 操作
-  await userEvent.click(canvas.getByTestId("return"));
+export const Returns = Template.bind({});
+Returns.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
 
-  // 結果
+  await earnAndInsertTwiceAndReturn("100円玉", canvasElement);
   await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^0円$/);
   await expect(within(canvas.getByTestId("returnSlot")).queryAllByText(/^100円玉$/)).toHaveLength(2);
+};
 
-  // 操作
+export const ReturnSlotToInert = Template.bind({});
+ReturnSlotToInert.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await earnAndInsertTwiceAndReturn("100円玉", canvasElement);
   await dragAndDrop(canvas.getAllByText("100円玉")[0], canvas.getByText("Insert"));
-
-  // 結果
   await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^100円$/);
   await expect(within(canvas.getByTestId("returnSlot")).queryAllByText(/^100円玉$/)).toHaveLength(1);
+};
+
+export const ReturnSlotToWallet = Template.bind({});
+ReturnSlotToWallet.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await earnAndInsertTwiceAndReturn("100円玉", canvasElement);
+  await dragAndDrop(canvas.getAllByText("100円玉")[0], canvas.getByText("Wallet"));
+  await expect(within(canvas.getByTestId("returnSlot")).queryAllByText(/^100円玉$/)).toHaveLength(1);
+  await expect(within(canvas.getByTestId("wallet")).queryAllByText(/^100円玉$/)).toHaveLength(1);
 };

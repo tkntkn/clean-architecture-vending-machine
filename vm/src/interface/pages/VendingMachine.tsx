@@ -32,12 +32,6 @@ export function VendingMachine(props: {}) {
 
   const [moneyLike, setMoneyLike] = useState("");
 
-  const handleInsert = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    insert(moneyLike);
-    setMoneyLike("");
-  };
-
   const handleEarn = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     earn(moneyLike);
@@ -52,11 +46,12 @@ export function VendingMachine(props: {}) {
     });
   };
 
+  const insertDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(insert);
+  const walletDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(earn);
+
   const totalInsertedAmount = useMemo(() => {
     return sum(inserted.map(([type]) => type.value));
   }, [inserted]);
-
-  const insertDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(insert);
 
   return (
     <div className="VendingMachine">
@@ -99,14 +94,16 @@ export function VendingMachine(props: {}) {
       <div data-testid="returnSlot">
         <Wallet moneyLikes={returnSlot} onUpdate={setReturnSlot} />
       </div>
-      <h2>Wallet</h2>
-      <div data-testid="wallet">
-        <Wallet moneyLikes={wallet} onUpdate={setWallet} />
+      <div {...walletDropHandlers}>
+        <h2>Wallet</h2>
+        <div data-testid="wallet">
+          <Wallet moneyLikes={wallet} onUpdate={setWallet} />
+        </div>
+        <form onSubmit={handleEarn}>
+          <input data-testid="earning" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
+          <button type="submit">Earn</button>
+        </form>
       </div>
-      <form onSubmit={handleEarn}>
-        <input data-testid="earning" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
-        <button type="submit">Earn</button>
-      </form>
     </div>
   );
 }
