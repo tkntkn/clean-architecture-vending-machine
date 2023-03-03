@@ -1,0 +1,7 @@
+.WalletItem-unknownItem::before {
+  content: '?';
+  font-size: 20px;
+  position: absolute;
+  display: block;
+  width: inherit;
+}

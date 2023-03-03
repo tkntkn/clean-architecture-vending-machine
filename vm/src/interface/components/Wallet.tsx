@@ -10,7 +10,7 @@ export function Wallet({ moneyLikes, onUpdate }: { moneyLikes: MoneyLike[]; onUp
   const handleTakeOut = useCallback(([targetSymbol]: WalletItem) => onUpdate(remove(items, ([symbol]) => symbol === targetSymbol).map(([_, moneyLike]) => moneyLike)), [items]);
 
   return (
-    <div>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       {items.map((item, index) => (
         <WalletItem key={index} item={item} onTakeOut={handleTakeOut} />
       ))}

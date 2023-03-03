@@ -1,10 +1,10 @@
-import { DragEvent, FormEvent, useMemo, useState } from "react";
+import { FormEvent, useCallback, useMemo, useState } from "react";
 import { Money, MoneyLike, MoneyType } from "@/domain/entities/money";
 import { getInsertionStatusMessage, insertMoney, InsertionState } from "@/domain/flows/insertMoney";
 import { useArrayState } from "@/utils/hooks";
 import { returnMoney } from "@/domain/flows/returnMoney";
 import { sum } from "@/utils/MathHelper";
-import { MoneyLikeDragDataType } from "@/interface/components/WalletItem";
+import { useWalletItemDropHandlers } from "@/interface/components/WalletItem";
 import { Wallet } from "@/interface/components/Wallet";
 
 export function VendingMachine(props: {}) {
@@ -12,15 +12,20 @@ export function VendingMachine(props: {}) {
   const [inserted, setInserted, pushInserted] = useArrayState<[MoneyType, Money]>();
   const [returnSlot, setReturnSlot] = useArrayState<MoneyLike>([]);
 
-  const [moneyLike, setMoneyLike] = useState("");
-
-  const handleInsert = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const insert = useCallback((moneyLike: MoneyLike) => {
+    if (!moneyLike) return;
     insertMoney(moneyLike, {
       stock: { add: (type, money) => pushInserted([type, money]) },
       state: { set: setInsertionState },
       returnSlot: { put: (money) => setReturnSlot((slot) => slot.concat(money)) },
     });
+  }, []);
+
+  const [moneyLike, setMoneyLike] = useState("");
+
+  const handleInsert = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    insert(moneyLike);
     setMoneyLike("");
   };
 
@@ -36,37 +41,13 @@ export function VendingMachine(props: {}) {
     return sum(inserted.map(([type]) => type.value));
   }, [inserted]);
 
-  const handleInsertDragEnter = (event: DragEvent<HTMLFormElement>) => {
-    if (event.dataTransfer.types.includes(MoneyLikeDragDataType)) {
-      event.dataTransfer.dropEffect = "move";
-      event.preventDefault();
-    }
-  };
-
-  const handleInsertDragOver = (event: DragEvent<HTMLFormElement>) => {
-    if (event.dataTransfer.types.includes(MoneyLikeDragDataType)) {
-      event.dataTransfer.dropEffect = "move";
-      event.preventDefault();
-    }
-  };
-
-  const handleInsertDrop = (event: DragEvent<HTMLFormElement>) => {
-    if (event.dataTransfer.types.includes(MoneyLikeDragDataType)) {
-      event.preventDefault();
-      const moneyLike = event.dataTransfer.getData(MoneyLikeDragDataType);
-      insertMoney(moneyLike, {
-        stock: { add: (type, money) => pushInserted([type, money]) },
-        state: { set: setInsertionState },
-        returnSlot: { put: (money) => setReturnSlot((slot) => slot.concat(money)) },
-      });
-    }
-  };
+  const insertDropHandlers = useWalletItemDropHandlers<HTMLFormElement>(insert);
 
   return (
     <div className="VendingMachine">
       <h2>Message</h2>
       <p>{(insertionState && getInsertionStatusMessage(insertionState)) ?? "Hello."}</p>
-      <form onSubmit={handleInsert} onDragEnter={handleInsertDragEnter} onDragOver={handleInsertDragOver} onDrop={handleInsertDrop}>
+      <form onSubmit={handleInsert} {...insertDropHandlers}>
         <input data-testid="money" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
         <button data-testid="insert" type="submit">
           Insert
