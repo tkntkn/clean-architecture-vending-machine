@@ -26,6 +26,7 @@ export function WalletItem({ item, onTakeOut }: { item: WalletItem; onTakeOut: (
         title={moneyLike}
         style={{
           display: "inline-block",
+          cursor: "pointer",
           margin: 5,
           width: 30,
           height: 30,
@@ -52,6 +53,7 @@ export function WalletItem({ item, onTakeOut }: { item: WalletItem; onTakeOut: (
         title={moneyLike}
         style={{
           display: "inline-block",
+          cursor: "pointer",
           margin: 5,
           width: 40,
           height: 25,
