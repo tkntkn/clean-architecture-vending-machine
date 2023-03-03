@@ -1,6 +1,7 @@
 import { detectMoneyType, Money, MoneyLike, MoneyType } from "@/domain/entities/money";
 import { returnMoney, ReturnMoneyState } from "@/domain/flows/returnMoney";
-import { expect, test } from "vitest";
+import exp from "constants";
+import { expect, test, vi } from "vitest";
 
 test("return works correctly", () => {
   const m1 = detectMoneyType("10円玉！")!;
@@ -8,21 +9,26 @@ test("return works correctly", () => {
   const m3 = detectMoneyType("50円玉！！！")!;
   const m4 = detectMoneyType("10円玉！")!;
 
-  const stock: [MoneyType, Money][] = [
-    [m1.type, m1.money],
-    [m2.type, m2.money],
-    [m3.type, m3.money],
-    [m4.type, m4.money],
-  ];
+  const stockTakeAll = vi.fn(
+    () =>
+      [
+        [m1.type, m1.money],
+        [m2.type, m2.money],
+        [m3.type, m3.money],
+        [m4.type, m4.money],
+      ] as ReturnType<ReturnMoneyState["stock"]["takeAll"]>
+  );
 
-  const returnSlot: MoneyLike[] = [];
+  const returnSlotPutAll = vi.fn();
 
   const state: ReturnMoneyState = {
-    stock: { takeAll: () => stock.splice(0, stock.length) },
-    returnSlot: { putAll: (moneys: MoneyLike[]) => returnSlot.push(...moneys) },
+    stock: { takeAll: stockTakeAll },
+    returnSlot: { putAll: returnSlotPutAll },
   };
 
   returnMoney(state);
-  expect(stock).toEqual([]);
-  expect(returnSlot.slice().sort()).toEqual([m1.money, m2.money, m3.money, m4.money].slice().sort());
+  expect(stockTakeAll).toBeCalledWith();
+  expect(returnSlotPutAll).toBeCalledWith([m1.money, m2.money, m3.money, m4.money]);
+  expect(stockTakeAll).toBeCalledTimes(1);
+  expect(returnSlotPutAll).toBeCalledTimes(1);
 });

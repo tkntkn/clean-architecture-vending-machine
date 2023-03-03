@@ -1,26 +1,29 @@
-import { Money, MoneyLike, MoneyType } from "@/domain/entities/money";
-import { insertMoney, InsertionState, InsertMoneyState } from "@/domain/flows/insertMoney";
-import { expect, test } from "vitest";
+import { MoneyType } from "@/domain/entities/money";
+import { insertMoney, InsertMoneyState } from "@/domain/flows/insertMoney";
+import { expect, test, vi } from "vitest";
 
 test("insert works correctly", () => {
-  const stock: [MoneyType, Money][] = [];
-  const returnSlot: MoneyLike[] = [];
-  let state: InsertionState | undefined = undefined;
+  const stockAdd = vi.fn();
+  const stateSet = vi.fn();
+  const returnSlotPut = vi.fn();
 
   const InsertState: InsertMoneyState = {
-    stock: { add: (type, money) => stock.push([type, money]) },
-    state: { set: (newState) => (state = newState) },
-    returnSlot: { put: (money) => returnSlot.push(money) },
+    stock: { add: stockAdd },
+    state: { set: stateSet },
+    returnSlot: { put: returnSlotPut },
   };
 
   insertMoney("invalid money", InsertState);
-
-  expect(state).toBe("invalid");
-  expect(stock).toHaveLength(0);
-  expect(returnSlot).toEqual(["invalid money"]);
+  expect(stateSet).toBeCalledWith("invalid");
+  expect(returnSlotPut).toBeCalledWith("invalid money");
+  expect(stateSet).toBeCalledTimes(1);
+  expect(stockAdd).toBeCalledTimes(0);
+  expect(returnSlotPut).toBeCalledTimes(1);
 
   insertMoney("100円玉: valid money", InsertState);
-  expect(state).toBe("inserted");
-  expect(stock).toHaveLength(1);
-  expect(returnSlot).toEqual(["invalid money"]);
+  expect(stateSet).toBeCalledWith("inserted");
+  expect(stockAdd).toBeCalledWith(MoneyType.OneHundred, "100円玉: valid money");
+  expect(stateSet).toBeCalledTimes(2);
+  expect(stockAdd).toBeCalledTimes(1);
+  expect(returnSlotPut).toBeCalledTimes(1);
 });
