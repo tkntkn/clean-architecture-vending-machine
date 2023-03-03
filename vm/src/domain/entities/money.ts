@@ -1,9 +1,11 @@
 import { Nominal, ToNominal } from "@/utils/nominal";
 
 export type Money = Nominal<string, "Money">;
+export type MoneyLike = string;
 const ToMoney = ToNominal<string, "Money">;
-export type MoneyType = Nominal<{ value: number }, "MoneyType">;
-const ToMoneyType = ToNominal<{ value: number }, "MoneyType">;
+export type MoneyValue = 10 | 50 | 100 | 500 | 1000;
+export type MoneyType = Nominal<{ value: MoneyValue }, "MoneyType">;
+const ToMoneyType = ToNominal<{ value: MoneyValue }, "MoneyType">;
 
 export const MoneyType = {
   Ten: ToMoneyType({ value: 10 }),
@@ -12,6 +14,8 @@ export const MoneyType = {
   FiveHundred: ToMoneyType({ value: 500 }),
   OneThousand: ToMoneyType({ value: 1000 }),
 } as const;
+
+export const MoneyTypeMap = new Map(Object.values(MoneyType).map(type => [type.value, type]));
 
 export const allMoneyTypes = Object.values(MoneyType);
 
