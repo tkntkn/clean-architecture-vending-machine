@@ -3,7 +3,6 @@ import { VendingMachine } from "@/interface/pages/VendingMachine";
 import { userEvent, within } from "@storybook/testing-library";
 import { expect } from "@storybook/jest";
 import { dragAndDrop } from "@/utils/StorybookHelper";
-import exp from "constants";
 
 export default {
   component: VendingMachine,
@@ -48,8 +47,8 @@ export const Insert100 = Template.bind({});
 Insert100.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
+  await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^0円$/);
   await earnAndInsert("100円玉", canvasElement);
-  await expect(canvas.getAllByText("Inserted.")).toHaveLength(1);
   await expect(canvas.getByTestId("inserted")).toHaveTextContent(/^100円$/);
 };
 
@@ -57,9 +56,10 @@ export const InsertInvalid = Template.bind({});
 InsertInvalid.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
+  await expect(within(canvas.getByTestId("returnSlot")).queryAllByText(/^100円$/)).toHaveLength(0);
   await earnToWallet("100円", canvasElement);
   await dragAndDrop(canvas.getAllByText("100円")[0], canvas.getByText("Insert"));
-  await expect(canvas.getAllByText("Invalid Money.")).toHaveLength(1);
+  await expect(within(canvas.getByTestId("returnSlot")).queryAllByText(/^100円$/)).toHaveLength(1);
 };
 
 export const Returns = Template.bind({});

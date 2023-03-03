@@ -1,15 +1,14 @@
-import { FormEvent, useCallback, useMemo, useState } from "react";
 import { Money, MoneyLike, MoneyType } from "@/domain/entities/money";
-import { getInsertionStatusMessage, insertMoney, InsertionState } from "@/domain/flows/insertMoney";
-import { useArrayState } from "@/utils/hooks";
-import { returnMoney } from "@/domain/flows/returnMoney";
-import { sum } from "@/utils/MathHelper";
-import { useWalletItemDropHandlers } from "@/interface/components/WalletItem";
-import { Wallet } from "@/interface/components/Wallet";
 import { earnMoney } from "@/domain/flows/earnMoney";
+import { insertMoney } from "@/domain/flows/insertMoney";
+import { returnMoney } from "@/domain/flows/returnMoney";
+import { Wallet } from "@/interface/components/Wallet";
+import { useWalletItemDropHandlers } from "@/interface/components/WalletItem";
+import { useArrayState } from "@/utils/hooks";
+import { sum } from "@/utils/MathHelper";
+import { FormEvent, useCallback, useMemo, useState } from "react";
 
 export function VendingMachine(props: {}) {
-  const [insertionState, setInsertionState] = useState<InsertionState>();
   const [inserted, setInserted, pushInserted] = useArrayState<[MoneyType, Money]>();
   const [returnSlot, setReturnSlot] = useArrayState<MoneyLike>([]);
   const [wallet, setWallet, pushWallet] = useArrayState<MoneyLike>([]);
@@ -18,7 +17,6 @@ export function VendingMachine(props: {}) {
     if (!moneyLike) return;
     insertMoney(moneyLike, {
       stock: { add: (type, money) => pushInserted([type, money]) },
-      state: { set: setInsertionState },
       returnSlot: { put: (money) => setReturnSlot((slot) => slot.concat(money)) },
     });
   }, []);
@@ -55,8 +53,6 @@ export function VendingMachine(props: {}) {
 
   return (
     <div className="VendingMachine">
-      <h2>Message</h2>
-      <p>{(insertionState && getInsertionStatusMessage(insertionState)) ?? "Hello."}</p>
       <div {...insertDropHandlers}>
         <h2>Insert</h2>
         <div
