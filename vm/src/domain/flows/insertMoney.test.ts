@@ -7,20 +7,20 @@ test("insert works correctly", () => {
   const stateSet = vi.fn();
   const returnSlotPut = vi.fn();
 
-  const InsertState: InsertMoneyState = {
+  const state: InsertMoneyState = {
     stock: { add: stockAdd },
     state: { set: stateSet },
     returnSlot: { put: returnSlotPut },
   };
 
-  insertMoney("invalid money", InsertState);
+  insertMoney("invalid money", state);
   expect(stateSet).toBeCalledWith("invalid");
   expect(returnSlotPut).toBeCalledWith("invalid money");
   expect(stateSet).toBeCalledTimes(1);
   expect(stockAdd).toBeCalledTimes(0);
   expect(returnSlotPut).toBeCalledTimes(1);
 
-  insertMoney("100円玉: valid money", InsertState);
+  insertMoney("100円玉: valid money", state);
   expect(stateSet).toBeCalledWith("inserted");
   expect(stockAdd).toBeCalledWith(MoneyType.OneHundred, "100円玉: valid money");
   expect(stateSet).toBeCalledTimes(2);

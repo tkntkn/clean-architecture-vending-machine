@@ -1,6 +1,5 @@
-import { detectMoneyType, Money, MoneyLike, MoneyType } from "@/domain/entities/money";
+import { detectMoneyType } from "@/domain/entities/money";
 import { returnMoney, ReturnMoneyState } from "@/domain/flows/returnMoney";
-import exp from "constants";
 import { expect, test, vi } from "vitest";
 
 test("return works correctly", () => {

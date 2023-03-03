@@ -6,11 +6,13 @@ import { returnMoney } from "@/domain/flows/returnMoney";
 import { sum } from "@/utils/MathHelper";
 import { useWalletItemDropHandlers } from "@/interface/components/WalletItem";
 import { Wallet } from "@/interface/components/Wallet";
+import { earnMoney } from "@/domain/flows/earnMoney";
 
 export function VendingMachine(props: {}) {
   const [insertionState, setInsertionState] = useState<InsertionState>();
   const [inserted, setInserted, pushInserted] = useArrayState<[MoneyType, Money]>();
   const [returnSlot, setReturnSlot] = useArrayState<MoneyLike>([]);
+  const [wallet, setWallet, pushWallet] = useArrayState<MoneyLike>([]);
 
   const insert = useCallback((moneyLike: MoneyLike) => {
     if (!moneyLike) return;
@@ -21,11 +23,24 @@ export function VendingMachine(props: {}) {
     });
   }, []);
 
+  const earn = useCallback((moneyLike: MoneyLike) => {
+    if (!moneyLike) return;
+    earnMoney(moneyLike, {
+      wallet: { add: (money) => pushWallet(money) },
+    });
+  }, []);
+
   const [moneyLike, setMoneyLike] = useState("");
 
   const handleInsert = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     insert(moneyLike);
+    setMoneyLike("");
+  };
+
+  const handleEarn = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    earn(moneyLike);
     setMoneyLike("");
   };
 
@@ -49,9 +64,7 @@ export function VendingMachine(props: {}) {
       <p>{(insertionState && getInsertionStatusMessage(insertionState)) ?? "Hello."}</p>
       <form onSubmit={handleInsert} {...insertDropHandlers}>
         <input data-testid="money" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
-        <button data-testid="insert" type="submit">
-          Insert
-        </button>
+        <button type="submit">Insert</button>
       </form>
       <h2>Inserted</h2>
       <p data-testid="inserted">{totalInsertedAmount}円</p>
@@ -64,6 +77,14 @@ export function VendingMachine(props: {}) {
       <div data-testid="returnSlot">
         <Wallet moneyLikes={returnSlot} onUpdate={setReturnSlot} />
       </div>
+      <h2>Wallet</h2>
+      <div data-testid="wallet">
+        <Wallet moneyLikes={wallet} onUpdate={setWallet} />
+      </div>
+      <form onSubmit={handleEarn}>
+        <input data-testid="earning" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
+        <button type="submit">Earn</button>
+      </form>
     </div>
   );
 }
