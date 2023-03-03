@@ -56,16 +56,38 @@ export function VendingMachine(props: {}) {
     return sum(inserted.map(([type]) => type.value));
   }, [inserted]);
 
-  const insertDropHandlers = useWalletItemDropHandlers<HTMLFormElement>(insert);
+  const insertDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(insert);
 
   return (
     <div className="VendingMachine">
       <h2>Message</h2>
       <p>{(insertionState && getInsertionStatusMessage(insertionState)) ?? "Hello."}</p>
-      <form onSubmit={handleInsert} {...insertDropHandlers}>
-        <input data-testid="money" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />
-        <button type="submit">Insert</button>
-      </form>
+      <div {...insertDropHandlers}>
+        <h2>Insert</h2>
+        <div
+          style={{
+            height: "50px",
+            width: "50px",
+            margin: "auto",
+            border: "solid 1px black",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "lightgray",
+          }}
+        >
+          <div
+            style={{
+              height: "10px",
+              width: "50px",
+              border: "solid 1px black",
+              borderRadius: "5px 5px",
+              backgroundColor: "white",
+            }}
+          ></div>
+        </div>
+      </div>
       <h2>Inserted</h2>
       <p data-testid="inserted">{totalInsertedAmount}円</p>
       <form onSubmit={handleReturn}>
