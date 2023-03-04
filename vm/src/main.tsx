@@ -5,16 +5,21 @@ import "@/interface/index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { VendingMachine } from "@/interface/pages/VendingMachine";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/default",
+      element: <Root />,
+    },
+    {
+      path: "/",
+      element: <VendingMachine />,
+    },
+  ],
   {
-    path: "/",
-    element: <Root />,
-  },
-  {
-    path: "/vm",
-    element: <VendingMachine />,
-  },
-]);
+    basename: "/clean-architecture-vending-machine/app",
+  }
+);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
