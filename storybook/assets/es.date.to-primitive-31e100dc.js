@@ -1,0 +1,2 @@
+var t=Object.defineProperty;var e=(r,o)=>t(r,"name",{value:o,configurable:!0});import{an as n,ao as v,ap as l,aq as m,ar as s,a1 as y,as as f}from"./iframe-a9409c24.js";var P=n,w=v;P("toPrimitive");w();var T=l,b=m,d=TypeError,p=e(function(r){if(T(this),r==="string"||r==="default")r="string";else if(r!=="number")throw d("Incorrect hint");return b(this,r)},"dateToPrimitive$1"),u=s,I=y,$=p,c=f,i=c("toPrimitive"),a=Date.prototype;u(a,i)||I(a,i,$);
+//# sourceMappingURL=es.date.to-primitive-31e100dc.js.map
