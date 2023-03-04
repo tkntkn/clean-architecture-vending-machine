@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./vm
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -29,4 +26,4 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./vm/clean-architecture-vending-machine
+          publish_dir: ./clean-architecture-vending-machine
