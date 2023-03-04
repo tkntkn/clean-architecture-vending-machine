@@ -20,13 +20,13 @@ jobs:
       - run: npm run build-storybook
       - run: npm run build
       - run: sh ./scripts/export-architecture-dot.sh
-      - run: mkdir -p clean-architecture-vending-machine
-      - run: mv dist clean-architecture-vending-machine/app
-      - run: mv architecture clean-architecture-vending-machine/architecture
-      - run: mv storybook-static clean-architecture-vending-machine/storybook
+      - run: mkdir -p ./clean-architecture-vending-machine
+      - run: mv dist ./clean-architecture-vending-machine/app
+      - run: mv architecture ./clean-architecture-vending-machine/architecture
+      - run: mv storybook-static ./clean-architecture-vending-machine/storybook
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./clean-architecture-vending-machine
+          publish_dir: ./vm/clean-architecture-vending-machine
