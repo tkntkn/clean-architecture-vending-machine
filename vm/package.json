@@ -12,7 +12,7 @@
     "build-storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook",
     "test-storybook": "test-storybook --watch",
     "screenshot": "storycap http://localhost:9001 --serverCmd \"cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook --no-open -p 9001\" -e Example/**",
-    "static-screenshot": "storycap http://127.0.0.1:9006 --serverCmd \"npx http-server storybook-static --ci -p 9006\" -e Example/**",
+    "static-screenshot": "storycap http://127.0.0.1:9006 --verbose --serverCmd \"npx http-server storybook-static --ci -p 9006\" -e Example/**",
     "vrt": "npm run screenshot && dotenv reg-suit run"
   },
   "dependencies": {
