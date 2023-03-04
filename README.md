@@ -4,7 +4,7 @@
 - [Architecture (Dependency Graph)](https://tkntkn.github.io/clean-architecture-vending-machine/architecture)
 - [Storybook](https://tkntkn.github.io/clean-architecture-vending-machine/storybook)
 
-# Scripts
+# Commands
 
 ```
 npm run dev
