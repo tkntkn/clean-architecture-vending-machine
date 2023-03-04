@@ -1,3 +1,4 @@
+import "@/interface/index.css";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { VendingMachine } from "@/interface/pages/VendingMachine";
 import { userEvent, within } from "@storybook/testing-library";
