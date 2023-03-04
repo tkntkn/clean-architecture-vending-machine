@@ -28,3 +28,5 @@ stories
 __screenshots__
 .reg
 .env
+docs/Architecture.md
+architecture/dependency.dot

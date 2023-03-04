@@ -2,6 +2,7 @@ set -e
 
 BASEDIR=$(dirname $(dirname $0))
 OUTFILE=$BASEDIR/docs/Architecture.md
+mkdir -p $BASEDIR/docs
 
 echo "# Architecture" > $OUTFILE
 echo "" >> $OUTFILE
