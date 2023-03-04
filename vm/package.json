@@ -10,9 +10,10 @@
     "preview": "vite preview",
     "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
     "build-storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook",
+    "build-storybook-2": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook -o ./storybook-static/clean-architecture-vending-machine/storybook",
     "test-storybook": "test-storybook --watch",
     "screenshot": "storycap http://localhost:9001 --serverCmd \"cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook --no-open -p 9001\" -e Example/**",
-    "static-screenshot": "storycap http://127.0.0.1:9006 --verbose --serverCmd \"npx http-server storybook-static --ci -p 9006\" -e Example/**",
+    "static-screenshot": "storycap http://127.0.0.1:9006/clean-architecture-vending-machine/storybook --verbose --serverCmd \"npx http-server storybook-static --ci -p 9006\" -e Example/**",
     "vrt": "npm run screenshot && dotenv reg-suit run"
   },
   "dependencies": {

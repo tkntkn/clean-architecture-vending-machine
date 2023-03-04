@@ -25,7 +25,7 @@ jobs:
       - name: workaround for detached HEAD
         run: |
           git checkout ${GITHUB_REF#refs/heads/} || git checkout -b ${GITHUB_REF#refs/heads/} && git pull
-      - run: npm run build-storybook
+      - run: npm run build-storybook-2
       - run: npm run static-screenshot
       - run: npx reg-suit run
         env:
