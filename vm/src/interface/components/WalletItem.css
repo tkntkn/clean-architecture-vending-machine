@@ -45,5 +45,6 @@
   font-size: 20px;
   position: absolute;
   display: block;
+  text-align: center;
   width: inherit;
 }
