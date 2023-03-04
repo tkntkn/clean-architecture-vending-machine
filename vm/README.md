@@ -1,6 +1,8 @@
-# Architecture
+# Link
 
-- [Architecture](./docs/Architecture.md)
+- [Vending Machine App](https://tkntkn.github.io/clean-architecture-vending-machine/app)
+- [Architecture (Dependency Graph)](https://tkntkn.github.io/clean-architecture-vending-machine/architecture)
+- [Storybook](https://tkntkn.github.io/clean-architecture-vending-machine/storybook)
 
 # Scripts
 
