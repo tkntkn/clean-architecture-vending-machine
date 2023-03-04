@@ -12,7 +12,7 @@ export function Root(props: {}) {
           <img src="/vite.svg" className="Root-logo" alt="Vite logo" />
         </a>
         <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="Root-logo is-react" alt="React logo" />
+          <img src={reactLogo} className="Root-logo--react" alt="React logo" />
         </a>
       </div>
       <h1 className="Root-h1">Vite + React</h1>

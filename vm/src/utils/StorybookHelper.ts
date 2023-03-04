@@ -1,3 +1,7 @@
+import { range } from "@/utils/ArrayHelper";
+import { getElementClientCenter } from "@/utils/ElementHelper";
+import { timer } from "@/utils/PromiseHelper";
+import { Vector } from "@/utils/Vector";
 import { fireEvent } from "@storybook/testing-library";
 
 export function dragAndDrop(element: Element, destination: Element) {
@@ -31,4 +35,44 @@ export function dragAndDrop(element: Element, destination: Element) {
   } finally {
     window.DataTransfer = _DataTransfer;
   }
+}
+
+const client = (v: Vector) => ({ clientX: v.x, clientY: v.y });
+
+export async function dragAndDropPointer(element: Element, destination: Element) {
+  const pointerId = 1;
+  const pointerType = "touch";
+
+  const { width, height } = element.getBoundingClientRect();
+  const size = new Vector(width, height);
+  const from = Vector.from(getElementClientCenter(element)).add(size.div(2));
+  const to = Vector.from(getElementClientCenter(destination)).add(size.div(2));
+
+  let capturing: Element | undefined = undefined;
+  const handlePointerCapture = (event: PointerEvent) => {
+    if (event.pointerId === pointerId) {
+      capturing = event.target as Element;
+    }
+  };
+  const eventTarget = (defaults: Element) => capturing ?? defaults;
+
+  fireEvent.pointerMove(eventTarget(element), { ...client(from), pointerType, pointerId, isPrimary: true });
+  fireEvent.pointerDown(eventTarget(element), { ...client(from), pointerType, pointerId, isPrimary: true });
+  fireEvent.pointerLeave(eventTarget(element), { ...client(from), pointerId });
+  await timer(50);
+  const count = 5;
+  for (const i of range(count)) {
+    const point = from.mul((count - i) / count).add(to.mul(i / count));
+    fireEvent.pointerMove(eventTarget(element), { ...client(point), pointerId, isPrimary: true });
+    await timer(50);
+  }
+  fireEvent.pointerMove(eventTarget(element), { ...client(to), pointerId, isPrimary: true });
+  fireEvent.pointerEnter(eventTarget(destination), { ...client(to), pointerId });
+  fireEvent.pointerOver(eventTarget(destination), { ...client(to), pointerId });
+  await timer(50);
+  fireEvent.pointerUp(eventTarget(destination), { ...client(to), pointerId });
+  await timer(50);
+  element.getRootNode().removeEventListener("gotpointercapture", handlePointerCapture as any);
+
+  return Promise.resolve();
 }

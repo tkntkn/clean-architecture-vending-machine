@@ -3,7 +3,7 @@ import { earnMoney } from "@/domain/flows/earnMoney";
 import { insertMoney } from "@/domain/flows/insertMoney";
 import { returnMoney } from "@/domain/flows/returnMoney";
 import { Wallet } from "@/interface/components/Wallet";
-import { useWalletItemDropHandlers } from "@/interface/components/WalletItem";
+import { useWalletItemDroppable } from "@/interface/components/WalletItem";
 import { useArrayState } from "@/utils/hooks";
 import { sum } from "@/utils/MathHelper";
 import { FormEvent, useCallback, useMemo, useState } from "react";
@@ -13,12 +13,14 @@ export function VendingMachine(props: {}) {
   const [returnSlot, setReturnSlot] = useArrayState<MoneyLike>([]);
   const [wallet, setWallet, pushWallet] = useArrayState<MoneyLike>([]);
 
-  const insert = useCallback((moneyLike: MoneyLike) => {
+  const insert = useCallback(async (moneyLike: MoneyLike) => {
     if (!moneyLike) return;
-    insertMoney(moneyLike, {
+    document.body.style.cursor = "progress";
+    await insertMoney(moneyLike, {
       stock: { add: (type, money) => pushInserted([type, money]) },
       returnSlot: { put: (money) => setReturnSlot((slot) => slot.concat(money)) },
     });
+    document.body.style.cursor = "unset";
   }, []);
 
   const earn = useCallback((moneyLike: MoneyLike) => {
@@ -44,8 +46,7 @@ export function VendingMachine(props: {}) {
     });
   };
 
-  const insertDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(insert);
-  const walletDropHandlers = useWalletItemDropHandlers<HTMLDivElement>(earn);
+  const insertDropHandlers = useWalletItemDroppable(insert);
 
   const totalInsertedAmount = useMemo(() => {
     return sum(inserted.map(([type]) => type.value));
@@ -53,12 +54,13 @@ export function VendingMachine(props: {}) {
 
   return (
     <div className="VendingMachine">
+      <h2>Vending Machine</h2>
       <div {...insertDropHandlers}>
-        <h2>Insert</h2>
         <div
+          title="insert"
           style={{
-            height: "50px",
-            width: "50px",
+            height: "100px",
+            width: "100px",
             margin: "auto",
             border: "solid 1px black",
             borderRadius: "50%",
@@ -71,29 +73,33 @@ export function VendingMachine(props: {}) {
           <div
             style={{
               height: "10px",
-              width: "50px",
+              width: "100px",
               border: "solid 1px black",
-              borderRadius: "5px 5px",
+              borderRadius: "3px",
               backgroundColor: "white",
             }}
           ></div>
         </div>
       </div>
-      <h2>Inserted</h2>
-      <p data-testid="inserted">{totalInsertedAmount}円</p>
-      <form onSubmit={handleReturn}>
-        <button data-testid="return" type="submit">
-          Return
-        </button>
-      </form>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <p>
+          Inserted: <span data-testid="inserted">{totalInsertedAmount}円</span>
+        </p>
+        <span style={{ display: "inline-block", width: "10px" }} />
+        <form onSubmit={handleReturn}>
+          <button data-testid="return" type="submit">
+            Return
+          </button>
+        </form>
+      </div>
       <h2>Return Slot</h2>
       <div data-testid="returnSlot">
-        <Wallet moneyLikes={returnSlot} onUpdate={setReturnSlot} />
+        <Wallet data-testid="returnSlot" moneyLikes={returnSlot} onUpdate={setReturnSlot} />
       </div>
-      <div {...walletDropHandlers}>
+      <div>
         <h2>Wallet</h2>
         <div data-testid="wallet">
-          <Wallet moneyLikes={wallet} onUpdate={setWallet} />
+          <Wallet moneyLikes={wallet} onUpdate={setWallet} droppable />
         </div>
         <form onSubmit={handleEarn}>
           <input data-testid="earning" type="text" value={moneyLike} onChange={(event) => setMoneyLike(event.target.value)} />

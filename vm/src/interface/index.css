@@ -24,7 +24,7 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100svh;
 }
 
 * {
@@ -32,7 +32,7 @@ body {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {  
+  :root {
     color-scheme: light;
     color: #213547;
     background-color: #ffffff;

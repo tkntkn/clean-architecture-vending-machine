@@ -6,6 +6,16 @@ export function removeAt<T>(array: T[], index: number) {
   }
 }
 
+export function isEqual<T>(a: T[], b: T[]) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
 export function remove<T>(array: T[], predicate: (item: T) => boolean) {
   return removeAt(array, array.findIndex(predicate));
+}
+
+export function* range(size: number) {
+  for (let i = 0; i < size; i++) {
+    yield i;
+  }
 }

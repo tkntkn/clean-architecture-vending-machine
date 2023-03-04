@@ -14,7 +14,7 @@
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
-.Root-logo.is-react:hover {
+.Root-logo--react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
