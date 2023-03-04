@@ -15,11 +15,13 @@ const config: StorybookViteConfig = {
   async viteFinal(config, options) {
     // Add your configuration here
     const env = {
-      command: "serve",
+      command: options.configType === "PRODUCTION" ? "build" : "serve",
       mode: options.configType ?? "DEVELOPMENT",
     } as const;
+    console.log("env", env);
     const file = await loadConfigFromFile(env, path.resolve(__dirname, "../vite.config.ts"));
     const userConfig = file!.config;
+    userConfig.base = "/clean-architecture-vending-machine/storybook";
     delete userConfig.plugins;
     return mergeConfig(config, userConfig);
   },
