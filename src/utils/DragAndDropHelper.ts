@@ -1,25 +1,40 @@
-import { DragEvent as ReactDragEvent, PointerEvent as ReactPointerEvent, StyleHTMLAttributes, useCallback } from "react";
-
 type Effect = DataTransfer["dropEffect"];
+type DataAttr = `data-${string}`;
 
-export function useDraggable<E extends HTMLElement, V extends string>(key: string, value: V, effect: Effect, callback: () => void): StyleHTMLAttributes<E> {
-  const draggable = true;
+function createDropEvent(type: "drop") {
+  return new DragEvent(type, {
+    dataTransfer: new DataTransfer(),
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+  });
+}
 
-  const onDragStart = useCallback(
-    (event: ReactDragEvent<E>) => {
-      event.preventDefault();
-      event.dataTransfer.setData(key, value);
+export function getDraggableHandler<V extends string>(
+  dataKey: string,
+  value: V,
+  effect: Effect,
+  callback: () => void
+) {
+  const draggable = true as const;
+
+  const onDragStart = (event: DragEvent) => {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.setData(dataKey, value);
       event.dataTransfer.effectAllowed = effect;
-    },
-    [key, value]
-  );
+    }
+  };
 
-  const onDragEnd = useCallback((event: ReactDragEvent<E>) => {
-    if (event.dataTransfer.types.includes(key) && event.dataTransfer.dropEffect === effect) {
+  const onDragEnd = (event: DragEvent) => {
+    if (
+      event.dataTransfer?.types.includes(dataKey) &&
+      event.dataTransfer.dropEffect === effect
+    ) {
       event.preventDefault();
       callback();
     }
-  }, []);
+  };
 
   return {
     draggable,
@@ -28,95 +43,102 @@ export function useDraggable<E extends HTMLElement, V extends string>(key: strin
   };
 }
 
-export function useDroppable<E extends Element, V extends string>(key: string, effect: Effect, callback: (value: V) => void) {
-  const onDragEnter = useCallback((event: ReactDragEvent<E>) => {
-    if (event.dataTransfer.types.includes(key)) {
+export function getDroppableHandler<V extends string>(
+  dataKey: string,
+  effect: Effect,
+  callback: (value: V) => void
+) {
+  const onDragEnter = (event: DragEvent) => {
+    if (event.dataTransfer?.types.includes(dataKey)) {
       event.preventDefault();
       event.dataTransfer.dropEffect = effect;
     }
-  }, []);
+  };
 
-  const onDragOver = useCallback((event: ReactDragEvent<E>) => {
-    if (event.dataTransfer.types.includes(key)) {
+  const onDragOver = (event: DragEvent) => {
+    if (event.dataTransfer?.types.includes(dataKey)) {
       event.preventDefault();
       event.dataTransfer.dropEffect = effect;
     }
-  }, []);
+  };
 
-  const onDrop = useCallback(
-    async (event: ReactDragEvent<E>) => {
-      if (event.dataTransfer.types.includes(key)) {
-        event.preventDefault();
-        callback(event.dataTransfer.getData(key) as V);
-      }
-    },
-    [callback]
-  );
+  const onDrop = (event: DragEvent) => {
+    if (event.dataTransfer?.types.includes(dataKey)) {
+      event.preventDefault();
+      callback(event.dataTransfer.getData(dataKey) as V);
+    }
+  };
 
   return { onDragEnter, onDragOver, onDrop };
 }
 
-export function useDraggableAlt<K extends `data-${string}`, V extends string>(key: string, dataKey: K, value: V, callback: () => void): StyleHTMLAttributes<HTMLElement> {
-  const onPointerDown = useCallback(
-    (event: ReactPointerEvent<HTMLElement>) => {
-      event.preventDefault();
-      const original = event.currentTarget;
-      original.style.opacity = "0.25";
+export function getPointerDraggableHandler<
+  K extends DataAttr,
+  V extends string
+>(dataKey: string, dataAttr: K, value: V, callback: () => void) {
+  const onPointerDown = (event: PointerEvent) => {
+    event.preventDefault();
+    const original = event.currentTarget;
+    if (!(original instanceof HTMLElement)) {
+      return;
+    }
+    original.style.opacity = "0.25";
 
-      const clone = original.cloneNode() as HTMLElement;
-      clone.style.position = "fixed";
-      clone.style.zIndex = "1000";
-      clone.style.opacity = "0.75";
+    const clone = original.cloneNode() as HTMLElement;
+    clone.style.position = "fixed";
+    clone.style.zIndex = "1000";
+    clone.style.opacity = "0.75";
 
-      original.parentElement?.appendChild(clone);
-      clone.setPointerCapture(event.pointerId);
+    original.parentElement?.appendChild(clone);
+    clone.setPointerCapture(event.pointerId);
 
-      // const target = clone.hasPointerCapture(event.pointerId) ? clone : document.body;
-      const target = document.body;
-      const abort = new AbortController();
+    // const target = clone.hasPointerCapture(event.pointerId) ? clone : document.body;
+    const target = document.body;
+    const abort = new AbortController();
 
-      target.addEventListener(
-        "pointermove",
-        (event: PointerEvent) => {
-          clone.style.left = `${event.x}px`;
-          clone.style.top = `${event.y}px`;
-          clone.style.translate = `-${clone.clientWidth}px -${clone.clientHeight}px`;
-
-          const elements = document.elementsFromPoint(event.x - clone.clientWidth / 2, event.y - clone.clientHeight / 2);
-          const acceptor = elements.find((element) => element.hasAttribute(dataKey));
-          if (acceptor) {
-            clone.style.cursor = "grabbing";
-          } else {
-            ``;
-            clone.style.cursor = "no-drop";
-          }
-        },
-        abort
+    const findAcceptor = (event: PointerEvent) => {
+      const elements = document.elementsFromPoint(
+        event.x - clone.clientWidth / 2,
+        event.y - clone.clientHeight / 2
       );
+      return elements.find((element) => element.hasAttribute(dataAttr));
+    };
 
-      target.addEventListener(
-        "pointerup",
-        (event: PointerEvent) => {
-          original.style.opacity = "unset";
+    target.addEventListener(
+      "pointermove",
+      (event: PointerEvent) => {
+        clone.style.left = `${event.x - clone.clientWidth}px`;
+        clone.style.top = `${event.y - clone.clientHeight}px`;
 
-          const elements = document.elementsFromPoint(event.x - clone.clientWidth / 2, event.y - clone.clientHeight / 2);
-          const acceptor = elements.find((element) => element.hasAttribute(dataKey));
-          if (acceptor) {
-            const dataTransfer = new DataTransfer();
-            dataTransfer.setData(key, value);
-            const drop = new DragEvent("drop", { dataTransfer, bubbles: true, cancelable: true, composed: true });
-            acceptor.dispatchEvent(drop);
-            callback();
-          }
+        const acceptor = findAcceptor(event);
+        if (acceptor) {
+          clone.style.cursor = "grabbing";
+        } else {
+          clone.style.cursor = "no-drop";
+        }
+      },
+      abort
+    );
 
-          clone.remove();
-          abort.abort();
-        },
-        abort
-      );
-    },
-    [callback]
-  );
+    target.addEventListener(
+      "pointerup",
+      (event: PointerEvent) => {
+        original.style.opacity = "unset";
+
+        const acceptor = findAcceptor(event);
+        if (acceptor) {
+          const drop = createDropEvent("drop");
+          drop.dataTransfer?.setData(dataKey, value);
+          acceptor.dispatchEvent(drop);
+          callback();
+        }
+
+        clone.remove();
+        abort.abort();
+      },
+      abort
+    );
+  };
 
   return {
     onPointerDown,
@@ -124,16 +146,16 @@ export function useDraggableAlt<K extends `data-${string}`, V extends string>(ke
   };
 }
 
-export function useDroppableAlt<K extends `data-${string}`, V extends string>(key: string, dataKey: K, callback: (value: V) => void): StyleHTMLAttributes<HTMLElement> {
-  const onDrop = useCallback(
-    async (event: ReactDragEvent<HTMLElement>) => {
-      if (event.dataTransfer.types.includes(key)) {
-        event.preventDefault();
-        callback(event.dataTransfer.getData(key) as V);
-      }
-    },
-    [callback]
-  );
+export function getPointerDroppableHandler<
+  K extends DataAttr,
+  V extends string
+>(dataKey: string, dataAttr: K, callback: (value: V) => void) {
+  const onDrop = (event: DragEvent) => {
+    if (event.dataTransfer?.types.includes(dataKey)) {
+      event.preventDefault();
+      callback(event.dataTransfer.getData(dataKey) as V);
+    }
+  };
 
-  return { onDrop, [dataKey]: true };
+  return { onDrop, [dataAttr]: true };
 }
